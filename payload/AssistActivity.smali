@@ -25,7 +25,7 @@
 
     .prologue
     .line 19
-    const/16 v0, 0x1a
+    const/16 v0, FACEPALM
 
     new-array v0, v0, [B
 
