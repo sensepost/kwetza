@@ -68,7 +68,7 @@ jar signed.
 
 #Information
 
-Kwetza by default will use the template and keystore located in the folder "payload" to inject and sign the infected apk. If you would like to sign the
+Kwetza is has been developed to work with Python 2. Kwetza by default will use the template and keystore located in the folder "payload" to inject and sign the infected apk. If you would like to sign the
 infected application with your own certificate, generate a new keystore and place it in the "payload" folder and rename to the existing keystore or change the 
 reference in the kwetza.py. The same can be done for payload templates. The password for the default keystore is, well, "password".
 
