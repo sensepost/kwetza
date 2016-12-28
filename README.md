@@ -1,5 +1,5 @@
 #Introduction
-By Chris Le Roy (@bromwpnie) chris@sensepost.com
+By Chris Le Roy (@brompwnie) chris@sensepost.com
 
 Kwetza is a tool that allows you to infect an existing Android application with a Meterpreter payload.
 
