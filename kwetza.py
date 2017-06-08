@@ -43,9 +43,14 @@ def initialize():
 		sys.exit()
 
 	cwd = os.getcwd()
-
-	#NOW WE NEED TO DECOMPILE THE APPLICATION
-	command = ["apktool", "d", ""+cwd+"/"+sys.argv[1]]
+	
+#NOW WE SET THE TARGET FOLDER
+	outputFolderName=sys.argv[1]
+	intPoss=outputFolderName.index(".")
+	global targetFolder
+	targetFolder=cwd+"/"+outputFolderName[:intPoss]
+	#NOW WE NEED TO DECOMPILE THE APPLICATIO
+	command = ["apktool", "d", ""+cwd+"/"+sys.argv[1], "-o" ""+targetFolder+"/"]
 	p = subprocess.Popen(command, stdout=subprocess.PIPE)
 	result = p.communicate()[0]
 
