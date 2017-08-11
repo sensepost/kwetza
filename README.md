@@ -1,4 +1,6 @@
 # Introduction
+[![Arsenal](https://rawgit.com/toolswatch/badges/master/arsenal/2017.svg)](http://www.toolswatch.org/2017/06/the-black-hat-arsenal-usa-2017-phenomenal-line-up-announced/)
+
 By Chris Le Roy (@brompwnie) chris@sensepost.com
 
 Kwetza is a tool that allows you to infect an existing Android application with a Meterpreter payload.
